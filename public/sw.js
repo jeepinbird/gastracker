@@ -1,7 +1,7 @@
 'use strict';
 // GasTracker service worker: cache the app shell so the UI opens instantly
 // (and offline); API calls always go to the network.
-const CACHE = 'gastracker-v2';
+const CACHE = 'gastracker-v3';
 const SHELL = ['/', '/style.css', '/app.js', '/manifest.webmanifest',
   '/icons/icon.svg', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/icon-180.png'];
 
