@@ -65,8 +65,8 @@ if (!files.length) {
 }
 
 const vehiclesByName = new Map();
-let vid = 0, fid = 0, sid = 0, nid = 0;
-const out = { app: 'gastracker', version: 1, vehicles: [], fuelups: [], services: [], notes: [], reminders: [], photos: [] };
+let vid = 0, fid = 0, sid = 0;
+const out = { app: 'gastracker', version: 1, vehicles: [], fuelups: [], services: [], reminders: [] };
 
 function vehicleFor(name, model) {
   if (!vehiclesByName.has(name)) {
@@ -121,16 +121,19 @@ for (const file of files) {
           notes: r.notes || '', location: '', payment: '',
         });
       } else {
-        // 'note' / 'bought' rows become notes
+        // 'note' / 'bought' rows become $0 service entries so the history
+        // stays in the timeline without affecting cost totals
         const price = numOr(r.price);
         const bought = r.service_type === 'bought';
-        out.notes.push({
-          id: ++nid, vehicle_id: v.id, date,
-          title: bought ? `Bought the ${v.name}` : (r.notes || 'Note'),
-          text: [r.notes && !bought ? '' : r.notes,
-            bought && price ? `Purchase price: $${price.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '',
-            numOr(r.odometer) != null ? `Odometer: ${r.odometer}` : '']
+        out.services.push({
+          id: ++sid, vehicle_id: v.id, date,
+          odometer: numOr(r.odometer), total_cost: null,
+          services: [bought ? 'Vehicle Purchased' : 'Note'],
+          tags: [],
+          notes: [r.notes || '',
+            bought && price ? `Purchase price: $${price.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '']
             .filter(Boolean).join('\n'),
+          location: '', payment: '',
         });
       }
     }
@@ -143,6 +146,6 @@ for (const v of out.vehicles) {
   const s = out.services.filter((x) => x.vehicle_id === v.id);
   const gal = f.reduce((a, x) => a + (x.gallons || 0), 0);
   const cost = f.reduce((a, x) => a + (x.total_cost || 0), 0);
-  console.error(`${v.name}: ${f.length} fuelups (${gal.toFixed(1)} gal, $${cost.toFixed(2)}), ${s.length} services, ${out.notes.filter((n) => n.vehicle_id === v.id).length} notes`);
+  console.error(`${v.name}: ${f.length} fuelups (${gal.toFixed(1)} gal, $${cost.toFixed(2)}), ${s.length} services`);
 }
 console.log(JSON.stringify(out, null, 1));

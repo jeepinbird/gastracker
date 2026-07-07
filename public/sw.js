@@ -1,7 +1,7 @@
 'use strict';
 // GasTracker service worker: cache the app shell so the UI opens instantly
 // (and offline); API calls always go to the network.
-const CACHE = 'gastracker-v1';
+const CACHE = 'gastracker-v2';
 const SHELL = ['/', '/style.css', '/app.js', '/manifest.webmanifest',
   '/icons/icon.svg', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/icon-180.png'];
 
@@ -19,17 +19,6 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET' || url.pathname.startsWith('/api/')) return;
-
-  if (url.pathname.startsWith('/uploads/')) {
-    // photos: cache-first (immutable filenames)
-    e.respondWith(
-      caches.match(e.request).then((hit) => hit || fetch(e.request).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(e.request, copy));
-        return res;
-      })));
-    return;
-  }
 
   // app shell: network-first with cache fallback, so updates apply on reload
   e.respondWith(

@@ -113,27 +113,8 @@ svg { display: block; }
 .fabitem .fablabel { position: relative; top: -26px; margin-bottom: -26px; }
 
 /* ---------- Vehicle Info page ---------- */
-.hero { position: relative; background: #222; }
-.hero img { width: 100%; height: clamp(200px, 52vw, 340px); object-fit: cover; display: block; opacity: .92; }
-.hero .noimg {
-  width: 100%; height: clamp(180px, 46vw, 300px);
-  display: grid; place-items: center; color: #cfd8d6; background: linear-gradient(160deg, #4b4b4b, #2c2c2c);
-}
-.hero .noimg svg { width: 72px; height: 72px; opacity: .7; }
-.hero .heroname {
-  position: absolute; left: 16px; bottom: 14px;
-  color: #f4f2ea; font-size: clamp(24px, 7vw, 34px); font-weight: 500;
-  text-shadow: 0 1px 6px rgba(0,0,0,.55);
-}
-.hero .herocam {
-  position: absolute; right: 14px; bottom: 14px;
-  width: 46px; height: 46px; border-radius: 50%;
-  background: rgba(255,255,255,.92); color: #444;
-  display: grid; place-items: center; box-shadow: var(--shadow);
-}
-.hero .herocam svg { width: 24px; height: 24px; }
-
-.statgrid { display: grid; grid-template-columns: 5fr 6fr; gap: 12px; padding: 14px 12px; margin-top: -34px; position: relative; }
+.vehsub { padding: 14px 14px 0; color: var(--ink-soft); font-size: clamp(13px, 3.6vw, 15px); font-weight: 600; letter-spacing: .02em; }
+.statgrid { display: grid; grid-template-columns: 5fr 6fr; gap: 12px; padding: 14px 12px; }
 .statgrid .col { display: flex; flex-direction: column; gap: 12px; }
 
 .card {
@@ -291,26 +272,6 @@ svg { display: block; }
 .slider-row input[type=range] { width: 100%; accent-color: #3b82f6; height: 34px; }
 .slider-val { font-size: clamp(20px, 5.6vw, 24px); font-weight: 700; }
 
-.attachbtn {
-  display: inline-flex; align-items: center; gap: 14px;
-  color: var(--teal-text); font-size: clamp(17px, 4.8vw, 20px); font-weight: 500;
-  padding: 6px 0;
-}
-.attachbtn .abox {
-  width: 64px; height: 64px; border: 1.6px solid var(--teal); border-radius: 12px;
-  display: grid; place-items: center; color: var(--teal);
-}
-.attachbtn .abox svg { width: 28px; height: 28px; }
-.thumbs { display: flex; gap: 10px; flex-wrap: wrap; padding-top: 8px; }
-.thumb { position: relative; width: 84px; height: 84px; border-radius: 8px; overflow: hidden; border: 1px solid #ddd; }
-.thumb img { width: 100%; height: 100%; object-fit: cover; }
-.thumb .del {
-  position: absolute; top: 2px; right: 2px; width: 24px; height: 24px;
-  background: rgba(0,0,0,.62); color: #fff; border-radius: 50%;
-  display: grid; place-items: center; font-size: 14px; line-height: 1;
-}
-.thumb .doc { width: 100%; height: 100%; display: grid; place-items: center; background: #f1f0e8; color: var(--ink-soft); font-size: 11px; padding: 4px; text-align: center; word-break: break-all; }
-
 .formfooter {
   display: flex; justify-content: space-between; align-items: center;
   padding: 18px 16px calc(var(--sab) + 22px);
@@ -389,12 +350,9 @@ svg { display: block; }
 @media (min-width: 760px) {
   .bottomnav { max-width: var(--maxw); margin: 0 auto; left: 0; right: 0; border-radius: 14px 14px 0 0; border: 1px solid #ddd; border-bottom: 0; }
   .fabitem { --fx: calc(var(--fxd, 0px)) !important; }
-  .fabitem[data-add=fuelup] { --fxd: -260px; --fy: -80px; }
-  .fabitem[data-add=service] { --fxd: -95px; --fy: -140px; }
-  .fabitem[data-add=note] { --fxd: 95px; --fy: -140px; }
-  .fabitem[data-add=reminder] { --fxd: 260px; --fy: -80px; }
-  .hero img, .hero .noimg { border-radius: 0 0 14px 14px; }
-  .hero { max-width: var(--maxw); margin: 0 auto; }
+  .fabitem[data-add=fuelup] { --fxd: -220px; --fy: -85px; }
+  .fabitem[data-add=service] { --fxd: 0px; --fy: -150px; }
+  .fabitem[data-add=reminder] { --fxd: 220px; --fy: -85px; }
   .recentbar { max-width: var(--maxw); margin: 0 auto; }
   .divider { max-width: var(--maxw); margin: 10px auto; }
   .modal { background: rgba(30,30,30,.7); }
