@@ -1,0 +1,14 @@
+{
+  "name": "gastracker",
+  "version": "1.0.0",
+  "description": "Personal self-hosted fuel & vehicle service tracker (Gas Cubby style). Zero dependencies.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "icons": "node scripts/make-icons.js"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#46b1a5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="GasTracker">
+  <title>GasTracker</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icons/icon-180.png">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar" id="topbar">
+      <button class="iconbtn" id="menuBtn" aria-label="Menu">
+        <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+      </button>
+      <h1 id="topbarTitle">GasTracker</h1>
+      <button class="iconbtn" id="infoBtn" aria-label="Vehicle details">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="12" cy="7.6" r="1.3" fill="currentColor"/></svg>
+      </button>
+    </header>
+
+    <main id="view" class="view"></main>
+
+    <nav class="bottomnav">
+      <button class="navbtn" id="navInfo" data-route="vehicle">
+        <svg viewBox="0 0 24 24"><path d="M3 17l5-6 4 3 6-8 3 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="3" cy="17" r="1.8" fill="currentColor"/><circle cx="8" cy="11" r="1.8" fill="currentColor"/><circle cx="12" cy="14" r="1.8" fill="currentColor"/><circle cx="18" cy="6" r="1.8" fill="currentColor"/></svg>
+        <span>Vehicle Info</span>
+      </button>
+      <div class="fabwrap">
+        <button class="fab" id="fabBtn" aria-label="Add entry">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <button class="navbtn" id="navLogs" data-route="logs">
+        <svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+        <span>Vehicle Logs</span>
+      </button>
+    </nav>
+
+    <div class="fabmenu hidden" id="fabMenu">
+      <button class="fabitem" data-add="fuelup" style="--fx:-38vw; --fy:-9vh">
+        <span class="fabicon"><svg viewBox="0 0 24 24"><path d="M5 4h8a1 1 0 0 1 1 1v15H4V5a1 1 0 0 1 1-1zm2 3h4v4H7V7z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 10h1.8a1.2 1.2 0 0 1 1.2 1.2v4.6a1.2 1.2 0 0 0 2.4 0V9l-2.2-2.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3 20h12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+        <span class="fablabel">Fuelup</span>
+      </button>
+      <button class="fabitem" data-add="service" style="--fx:-14vw; --fy:-16vh">
+        <span class="fabicon"><svg viewBox="0 0 24 24"><path d="M14.2 6.3a4.3 4.3 0 0 1 5.6-5l-2.7 2.6.7 2.8 2.8.7 2.6-2.7a4.3 4.3 0 0 1-5 5.6L8.5 20a2 2 0 0 1-2.9-2.9l8.6-10.8z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" transform="translate(-1.5 1.5) scale(.92)"/></svg></span>
+        <span class="fablabel">Service</span>
+      </button>
+      <button class="fabitem" data-add="note" style="--fx:14vw; --fy:-16vh">
+        <span class="fabicon"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M15.5 8.2l-6 6-.5 2.3 2.3-.5 6-6-1.8-1.8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></span>
+        <span class="fablabel">Note</span>
+      </button>
+      <button class="fabitem" data-add="reminder" style="--fx:38vw; --fy:-9vh">
+        <span class="fabicon"><svg viewBox="0 0 24 24"><path d="M12 4a6 6 0 0 1 6 6v3.5l1.5 2.5H4.5L6 13.5V10a6 6 0 0 1 6-6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+        <span class="fablabel">Reminder</span>
+      </button>
+    </div>
+
+    <div class="drawer-scrim hidden" id="drawerScrim"></div>
+    <aside class="drawer hidden" id="drawer"></aside>
+    <div id="modalRoot"></div>
+    <div id="toast" class="toast hidden"></div>
+  </div>
+  <script src="/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+  </script>
+</body>
+</html>

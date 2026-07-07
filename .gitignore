@@ -1,0 +1,6 @@
+# Your data (database + uploaded photos) — keep out of git, back up separately
+data/
+
+node_modules/
+*.log
+.DS_Store
