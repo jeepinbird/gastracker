@@ -1,0 +1,14 @@
+services:
+  gastracker:
+    build: .
+    container_name: gastracker
+    ports:
+      - "3000:3000"
+    volumes:
+      - gastracker-data:/data
+    restart: unless-stopped
+    # environment:
+    #   GASTRACKER_PASSWORD: change-me   # uncomment to require a password
+
+volumes:
+  gastracker-data:
