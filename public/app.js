@@ -158,7 +158,9 @@ function computeFuel() {
   const cityVals = S.fuelups.map((f) => f.city_pct).filter((c) => c != null);
   const totalServiceCost = S.services.reduce((s, r) => s + (r.total_cost || 0), 0);
   const mpgVals = mpgSeries.map((p) => p.v);
-  const milesTracked = odos.length >= 2 ? Math.max(...odos) - Math.min(...odos) : 0;
+  // Only measured distance counts (like Gas Cubby/Fuelly): segments broken by
+  // a missed fuel-up are excluded, so validDist is the true tracked total.
+  const milesTracked = validDist;
 
   return {
     mpgById, mpgSeries,

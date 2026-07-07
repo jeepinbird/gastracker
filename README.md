@@ -87,9 +87,18 @@ along if you also copy `data/uploads/`).
 
 ## Migrating from Gas Cubby / Fuelly
 
-Export your history as CSV from the old app, then either re-enter it or ask an
-LLM to convert the CSV into GasTracker's JSON export format (see
-`GET /api/export` for the shape) and use **menu → Import Backup**.
+Export your fuelups and services as CSV from the old app, then convert them:
+
+```bash
+node scripts/fuelly-convert.js civicfuelups.csv civicservices.csv \
+  jeepfuelups.csv jeepservices.csv > import.json
+```
+
+Pass any number of fuelup/service CSVs — vehicles are created automatically
+from the `car_name` column and merged across files. Then open the app and use
+**menu → Import Backup** with the generated file. Partial and missed fuel-ups,
+city %, brands (as locations), notes, and "bought the car" entries all carry
+over; MPG is recomputed and matches Fuelly's numbers.
 
 ## Development notes
 
