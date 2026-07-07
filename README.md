@@ -35,6 +35,33 @@ node server.js
 
 Open http://localhost:3000. That's it.
 
+### Run with Docker (recommended for servers)
+
+```bash
+docker compose up -d
+```
+
+That builds the image, starts it in the background, restarts it on crashes
+and reboots, and keeps your database in a named volume (`gastracker-data`).
+Check on it with `docker compose logs -f`; update with
+`git pull && docker compose up -d --build`.
+
+To require a password, uncomment `GASTRACKER_PASSWORD` in
+`docker-compose.yml`. Without compose, the equivalent is:
+
+```bash
+docker build -t gastracker .
+docker run -d --name gastracker -p 3000:3000 \
+  -v gastracker-data:/data --restart unless-stopped gastracker
+```
+
+**Backing up under Docker:** the JSON export in the app works as always, or
+grab the database file straight from the volume:
+
+```bash
+docker cp gastracker:/data/gastracker.db ./gastracker-backup.db
+```
+
 ### Options (environment variables)
 
 | Variable | Default | Purpose |
@@ -57,7 +84,7 @@ It launches full-screen like a native app.
 > HTTPS (e.g. Caddy or a Tailscale/WireGuard network). iOS requires HTTPS for
 > PWA installs from non-localhost hosts.
 
-### Run as a service (systemd example)
+### Run as a service without Docker (systemd example)
 
 ```ini
 [Unit]
