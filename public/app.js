@@ -67,11 +67,10 @@ const store = {
 const S = {
   vehicles: [],
   vehicle: null,          // active vehicle object
-  fuelups: [], services: [], notes: [], reminders: [],
-  vehiclePhotos: [],
+  fuelups: [], services: [], reminders: [],
   route: 'vehicle',
   search: '',
-  typeFilter: store.get('typeFilter', { fuelup: true, service: true, note: true, reminder: true }),
+  typeFilter: store.get('typeFilter', { fuelup: true, service: true, reminder: true }),
 };
 
 function units(v = S.vehicle) {
@@ -96,14 +95,12 @@ async function loadVehicles() {
 }
 
 async function loadVehicleData() {
-  if (!S.vehicle) { S.fuelups = S.services = S.notes = S.reminders = S.vehiclePhotos = []; return; }
+  if (!S.vehicle) { S.fuelups = S.services = S.reminders = []; return; }
   const id = S.vehicle.id;
-  [S.fuelups, S.services, S.notes, S.reminders, S.vehiclePhotos] = await Promise.all([
+  [S.fuelups, S.services, S.reminders] = await Promise.all([
     GET(`/api/fuelups?vehicle_id=${id}`),
     GET(`/api/services?vehicle_id=${id}`),
-    GET(`/api/notes?vehicle_id=${id}`),
     GET(`/api/reminders?vehicle_id=${id}`),
-    GET(`/api/photos?entity_type=vehicle&entity_id=${id}`),
   ]);
 }
 
@@ -261,11 +258,8 @@ function svgPie(cityPct) {
 const ICON = {
   fuel: '<svg viewBox="0 0 24 24"><path d="M5 4h8a1 1 0 0 1 1 1v15H4V5a1 1 0 0 1 1-1zm2 3h4v4H7V7z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 10h1.8a1.2 1.2 0 0 1 1.2 1.2v4.6a1.2 1.2 0 0 0 2.4 0V9l-2.2-2.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3 20h12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
   wrench: '<svg viewBox="0 0 24 24"><path d="M13.8 6a4.1 4.1 0 0 1 5.3-4.7L16.6 3.8l.6 2.7 2.7.6 2.5-2.5A4.1 4.1 0 0 1 17.7 10L8.3 20.6a1.9 1.9 0 0 1-2.8-2.7L13.8 6z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" transform="translate(-1 1) scale(.92)"/></svg>',
-  note: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M15.5 8.2l-6 6-.5 2.3 2.3-.5 6-6-1.8-1.8z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>',
   bell: '<svg viewBox="0 0 24 24"><path d="M12 4a6 6 0 0 1 6 6v3.5l1.5 2.5H4.5L6 13.5V10a6 6 0 0 1 6-6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
   car: '<svg viewBox="0 0 24 24"><path d="M4 13l1.6-4.5A2 2 0 0 1 7.5 7h9a2 2 0 0 1 1.9 1.5L20 13v5h-2.2v-1.6H6.2V18H4v-5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7.6" cy="14.4" r="1.1" fill="currentColor"/><circle cx="16.4" cy="14.4" r="1.1" fill="currentColor"/></svg>',
-  camera: '<svg viewBox="0 0 24 24"><path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="14" r="3.6" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17.6" cy="10.6" r=".9" fill="currentColor"/></svg>',
-  clip: '<svg viewBox="0 0 24 24"><path d="M8.5 12.5l6.8-6.8a3.2 3.2 0 0 1 4.5 4.5l-8.3 8.3a5.3 5.3 0 0 1-7.5-7.5L11.8 3.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" transform="scale(.9) translate(1.3 1.3)"/></svg>',
   trash: '<svg viewBox="0 0 24 24"><path d="M5 7h14M10 7V5h4v2m-8 0l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   eyeoff: '<svg viewBox="0 0 24 24"><path d="M4 12s3-5.5 8-5.5S20 12 20 12s-3 5.5-8 5.5S4 12 4 12z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="2.3" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M5 19L19 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
   download: '<svg viewBox="0 0 24 24"><path d="M12 4v10m0 0l-4-4m4 4l4-4M5 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -274,101 +268,6 @@ const ICON = {
   search: '<svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
   sliders: '<svg viewBox="0 0 24 24"><path d="M6 4v6m0 4v6m6-16v2m0 4v10m6-16v10m0 4v2" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><circle cx="6" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="12" cy="8" r="2" fill="none" stroke="currentColor" stroke-width="1.9"/><circle cx="18" cy="16" r="2" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>',
 };
-
-// ---------------------------------------------------------------- photos
-async function resizeImage(file, maxDim = 1600, quality = 0.85) {
-  if (file.type === 'application/pdf' || !file.type.startsWith('image/')) {
-    return new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onload = () => resolve(r.result);
-      r.onerror = reject;
-      r.readAsDataURL(file);
-    });
-  }
-  const url = URL.createObjectURL(file);
-  try {
-    const img = await new Promise((resolve, reject) => {
-      const i = new Image();
-      i.onload = () => resolve(i);
-      i.onerror = reject;
-      i.src = url;
-    });
-    const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.round(img.width * scale);
-    canvas.height = Math.round(img.height * scale);
-    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-    return canvas.toDataURL('image/jpeg', quality);
-  } catch {
-    return new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onload = () => resolve(r.result);
-      r.onerror = reject;
-      r.readAsDataURL(file);
-    });
-  } finally {
-    URL.revokeObjectURL(url);
-  }
-}
-
-// Attachment block used inside forms. For unsaved entities photos are queued
-// in `pending` and uploaded by the form's save handler once the id exists.
-function photoBlock({ label, kind, entityType, entityId, existing = [], pending, accept = 'image/*' }) {
-  const wrap = el(`<div class="formrow">
-    <span class="flabel">${esc(label)}</span>
-    <button type="button" class="attachbtn"><span class="abox">${kind === 'photo' ? ICON.camera : ICON.clip}</span><span>${kind === 'photo' ? '' : `Add ${esc(label.replace(/s$/, ''))}`}</span></button>
-    <div class="thumbs"></div>
-    <input type="file" accept="${accept}" multiple hidden>
-  </div>`);
-  const thumbs = $('.thumbs', wrap);
-  const input = $('input[type=file]', wrap);
-
-  function thumbEl(src, name, onDel) {
-    const isImg = /^data:image|\.(jpe?g|png|webp|gif|heic)$/i.test(src) || src.startsWith('/uploads/') && !/\.pdf$/i.test(src);
-    const t = el(`<div class="thumb">${isImg ? `<img src="${esc(src)}" alt="">` : `<span class="doc">${esc(name || 'file')}</span>`}<button type="button" class="del">✕</button></div>`);
-    $('.del', t).onclick = onDel;
-    return t;
-  }
-
-  function renderThumbs() {
-    thumbs.innerHTML = '';
-    for (const p of existing) {
-      thumbs.append(thumbEl(`/uploads/${p.filename}`, p.original_name, async () => {
-        if (!confirm('Remove this attachment?')) return;
-        await DEL(`/api/photos/${p.id}`);
-        existing.splice(existing.indexOf(p), 1);
-        renderThumbs();
-      }));
-    }
-    pending.forEach((q, i) => {
-      if (q.kind !== kind) return;
-      thumbs.append(thumbEl(q.data, q.name, () => { pending.splice(i, 1); renderThumbs(); }));
-    });
-  }
-
-  $('.attachbtn', wrap).onclick = () => input.click();
-  input.onchange = async () => {
-    for (const f of input.files) {
-      const data = await resizeImage(f);
-      if (entityId) {
-        const saved = await POST('/api/photos', { entity_type: entityType, entity_id: entityId, kind, name: f.name, data });
-        existing.push(saved);
-      } else {
-        pending.push({ kind, name: f.name, data });
-      }
-    }
-    input.value = '';
-    renderThumbs();
-  };
-  renderThumbs();
-  return wrap;
-}
-
-async function uploadPending(pending, entityType, entityId) {
-  for (const q of pending) {
-    await POST('/api/photos', { entity_type: entityType, entity_id: entityId, kind: q.kind, name: q.name, data: q.data });
-  }
-}
 
 // ---------------------------------------------------------------- sheets (pickers)
 function openSheet({ title, options, selected = [], multi = false, allowCustom = true, onDone }) {
@@ -486,8 +385,6 @@ function fuelupForm(existing) {
   const f = existing || {};
   const u = units();
   const stats = computeFuel();
-  const pending = [];
-  let photos = [], receipts = [];
   let fuelType = f.fuel_type || store.get('lastFuelType', DEFAULT_FUEL_TYPES[0]);
   let payment = f.payment || store.get('lastPayment', 'Credit');
 
@@ -523,8 +420,6 @@ function fuelupForm(existing) {
       <input type="datetime-local" id="fDate" value="${toLocalInput(f.date)}"></div>
     ${fText('Location', 'fLoc', f.location, '--')}
     ${fTap('Payment Method', 'payRow', payment)}
-    <div id="receiptSlot"></div>
-    <div id="photoSlot"></div>
     <div class="formrow"><label class="flabel" for="fNotes">Notes</label>
       <textarea id="fNotes" placeholder="">${esc(f.notes || '')}</textarea></div>
   </div>`);
@@ -561,16 +456,6 @@ function fuelupForm(existing) {
     },
   });
 
-  (async () => {
-    if (!isNew) {
-      const all = await GET(`/api/photos?entity_type=fuelup&entity_id=${f.id}`);
-      receipts = all.filter((p) => p.kind === 'receipt');
-      photos = all.filter((p) => p.kind === 'photo');
-    }
-    $('#receiptSlot', body).replaceWith(photoBlock({ label: 'Receipts', kind: 'receipt', entityType: 'fuelup', entityId: f.id, existing: receipts, pending, accept: 'image/*,application/pdf' }));
-    $('#photoSlot', body).replaceWith(photoBlock({ label: 'Photos', kind: 'photo', entityType: 'fuelup', entityId: f.id, existing: photos, pending }));
-  })();
-
   let footer = null;
   if (!isNew) {
     footer = el(`<div class="formfooter"><span></span><button type="button" class="danger">${ICON.trash} Delete</button></div>`);
@@ -603,8 +488,7 @@ function fuelupForm(existing) {
       rememberCustom('payments', DEFAULT_PAYMENTS, [payment]);
       store.set('lastFuelType', fuelType);
       store.set('lastPayment', payment);
-      const saved = isNew ? await POST('/api/fuelups', payload) : await PUT(`/api/fuelups/${f.id}`, payload);
-      await uploadPending(pending, 'fuelup', saved.id);
+      isNew ? await POST('/api/fuelups', payload) : await PUT(`/api/fuelups/${f.id}`, payload);
       toast(isNew ? 'Fuelup saved' : 'Fuelup updated');
       refresh();
     },
@@ -615,8 +499,6 @@ function fuelupForm(existing) {
 function serviceForm(existing) {
   const isNew = !existing;
   const s = existing || {};
-  const pending = [];
-  let photos = [], receipts = [];
   let services = s.services ? JSON.parse(s.services) : [];
   let tags = s.tags ? JSON.parse(s.tags) : [];
   let payment = s.payment || '';
@@ -632,8 +514,6 @@ function serviceForm(existing) {
     <div class="formrow"><label class="flabel" for="sDate">Date</label>
       <input type="datetime-local" id="sDate" value="${toLocalInput(s.date)}"></div>
     ${fTap('Services', 'svcRow', services.join(', '))}
-    <div id="receiptSlot"></div>
-    <div id="photoSlot"></div>
     ${fText('Location', 'sLoc', s.location, '')}
     ${fTap('Tags', 'tagRow', tags.join(', '))}
     ${fTap('Payment Type', 'payRow', payment)}
@@ -672,16 +552,6 @@ function serviceForm(existing) {
     },
   });
 
-  (async () => {
-    if (!isNew) {
-      const all = await GET(`/api/photos?entity_type=service&entity_id=${s.id}`);
-      receipts = all.filter((p) => p.kind === 'receipt');
-      photos = all.filter((p) => p.kind === 'photo');
-    }
-    $('#receiptSlot', body).replaceWith(photoBlock({ label: 'Service Receipts', kind: 'receipt', entityType: 'service', entityId: s.id, existing: receipts, pending, accept: 'image/*,application/pdf' }));
-    $('#photoSlot', body).replaceWith(photoBlock({ label: 'Photos', kind: 'photo', entityType: 'service', entityId: s.id, existing: photos, pending }));
-  })();
-
   let footer = null;
   if (!isNew) {
     footer = el(`<div class="formfooter"><span></span><button type="button" class="danger">${ICON.trash} Delete</button></div>`);
@@ -710,64 +580,8 @@ function serviceForm(existing) {
         location: $('#sLoc', body).value.trim(),
         notes: $('#sNotes', body).value.trim(),
       };
-      const saved = isNew ? await POST('/api/services', payload) : await PUT(`/api/services/${s.id}`, payload);
-      await uploadPending(pending, 'service', saved.id);
+      isNew ? await POST('/api/services', payload) : await PUT(`/api/services/${s.id}`, payload);
       toast(isNew ? 'Service saved' : 'Service updated');
-      refresh();
-    },
-  });
-}
-
-// ---------------------------------------------------------------- note form
-function noteForm(existing) {
-  const isNew = !existing;
-  const n = existing || {};
-  const pending = [];
-  let photos = [];
-
-  const body = el(`<div>
-    ${fTap('Vehicle', 'vehRow', S.vehicle.name)}
-    <div class="formrow"><label class="flabel" for="nDate">Date</label>
-      <input type="datetime-local" id="nDate" value="${toLocalInput(n.date)}"></div>
-    ${fText('Title', 'nTitle', n.title, '')}
-    <div class="formrow"><label class="flabel" for="nText">Note</label>
-      <textarea id="nText" placeholder="">${esc(n.text || '')}</textarea></div>
-    <div id="photoSlot"></div>
-  </div>`);
-
-  $('#vehRow', body).onclick = () => {};
-
-  (async () => {
-    if (!isNew) photos = await GET(`/api/photos?entity_type=note&entity_id=${n.id}`);
-    $('#photoSlot', body).replaceWith(photoBlock({ label: 'Photos', kind: 'photo', entityType: 'note', entityId: n.id, existing: photos, pending }));
-  })();
-
-  let footer = null;
-  if (!isNew) {
-    footer = el(`<div class="formfooter"><span></span><button type="button" class="danger">${ICON.trash} Delete</button></div>`);
-    $('.danger', footer).onclick = async () => {
-      if (!confirm('Delete this note?')) return;
-      await DEL(`/api/notes/${n.id}`);
-      $('.modal')?.remove();
-      toast('Note deleted');
-      refresh();
-    };
-  }
-
-  openModal({
-    title: isNew ? 'New Note' : 'Edit Note',
-    body, footer,
-    onSave: async () => {
-      const payload = {
-        vehicle_id: S.vehicle.id,
-        date: new Date($('#nDate', body).value).toISOString(),
-        title: $('#nTitle', body).value.trim(),
-        text: $('#nText', body).value.trim(),
-      };
-      if (!payload.title && !payload.text) { toast('Write something first'); return false; }
-      const saved = isNew ? await POST('/api/notes', payload) : await PUT(`/api/notes/${n.id}`, payload);
-      await uploadPending(pending, 'note', saved.id);
-      toast(isNew ? 'Note saved' : 'Note updated');
       refresh();
     },
   });
@@ -849,8 +663,6 @@ function reminderForm(existing) {
 function vehicleForm(existing) {
   const isNew = !existing;
   const v = existing || {};
-  const pending = [];
-  let photos = [], insuranceCards = [], receipts = [];
   let transmission = v.transmission || '';
   let country = v.country || 'United States';
   let distanceUnit = v.distance_unit || 'mi';
@@ -868,14 +680,12 @@ function vehicleForm(existing) {
     </div>
     ${fText('Model', 'vModel', v.model, 'Civic Touring')}
     ${fText('VIN #', 'vVin', v.vin, '')}
-    <div id="photoSlot"></div>
     ${fText('Engine', 'vEngine', v.engine, '1.5L L4 GAS')}
     ${fTap('Transmission', 'transRow', transmission, 'Select…')}
     <div class="formgrid">
       ${fText('License Plate', 'vPlate', v.license_plate, '')}
       ${fText('Insurance Policy', 'vPolicy', v.insurance_policy, '')}
     </div>
-    <div id="insSlot"></div>
     ${fText('Tire Size', 'vTireSize', v.tire_size, '')}
     ${fText('Tire Pressure', 'vTirePres', v.tire_pressure, '')}
     ${fText('Country', 'vCountry', country, '')}
@@ -885,7 +695,6 @@ function vehicleForm(existing) {
     </div>
     ${fTap('Fuel Tracking', 'trackRow', fuelTracking === 'odometer' ? 'Odometer' : 'Trip Distance')}
     ${fTap('Track City / Highway', 'cityRow', trackCity ? 'Yes' : 'No')}
-    <div id="receiptSlot"></div>
     <div class="formrow"><label class="flabel" for="vNotes">Vehicle Note (Private)</label>
       <textarea id="vNotes">${esc(v.notes || '')}</textarea></div>
   </div>`);
@@ -918,18 +727,6 @@ function vehicleForm(existing) {
     trackCity = val === 'Yes';
     $('#cityRow .fvalue', body).textContent = val;
   }, false);
-
-  (async () => {
-    if (!isNew) {
-      const all = await GET(`/api/photos?entity_type=vehicle&entity_id=${v.id}`);
-      photos = all.filter((p) => p.kind === 'photo');
-      insuranceCards = all.filter((p) => p.kind === 'insurance_card');
-      receipts = all.filter((p) => p.kind === 'receipt');
-    }
-    $('#photoSlot', body).replaceWith(photoBlock({ label: 'Photos', kind: 'photo', entityType: 'vehicle', entityId: v.id, existing: photos, pending }));
-    $('#insSlot', body).replaceWith(photoBlock({ label: 'Insurance Card', kind: 'insurance_card', entityType: 'vehicle', entityId: v.id, existing: insuranceCards, pending, accept: 'image/*,application/pdf' }));
-    $('#receiptSlot', body).replaceWith(photoBlock({ label: 'Receipts', kind: 'receipt', entityType: 'vehicle', entityId: v.id, existing: receipts, pending, accept: 'image/*,application/pdf' }));
-  })();
 
   let footer = null;
   if (!isNew) {
@@ -976,7 +773,6 @@ function vehicleForm(existing) {
         notes: $('#vNotes', body).value.trim(),
       };
       const saved = isNew ? await POST('/api/vehicles', payload) : await PUT(`/api/vehicles/${v.id}`, payload);
-      await uploadPending(pending, 'vehicle', saved.id);
       toast(isNew ? 'Vehicle added' : 'Vehicle updated');
       await loadVehicles();
       if (isNew) await setActiveVehicle(saved.id);
@@ -996,19 +792,12 @@ function reminderIsDue(r, lastOdo) {
 function renderVehicleInfo(view) {
   const stats = computeFuel();
   const u = units();
-  const heroPhoto = S.vehiclePhotos.find((p) => p.kind === 'photo');
-
   const dueReminders = S.reminders.filter((r) => reminderIsDue(r, stats.lastOdometer));
+  const subtitle = [S.vehicle.year, S.vehicle.make, S.vehicle.model].filter(Boolean).join(' ');
 
   view.innerHTML = `
-    <div class="hero">
-      ${heroPhoto
-        ? `<img src="/uploads/${esc(heroPhoto.filename)}" alt="${esc(S.vehicle.name)}">`
-        : `<div class="noimg">${ICON.car.replace('viewBox', 'width="72" height="72" viewBox')}</div>`}
-      <div class="heroname">${esc(S.vehicle.name)}</div>
-      <button class="herocam" id="heroCamBtn" aria-label="Add photo">${ICON.camera}</button>
-    </div>
     <div class="container">
+      ${subtitle ? `<div class="vehsub">${esc(subtitle)}</div>` : ''}
       ${dueReminders.length ? `<div class="tilerow" style="grid-template-columns:1fr;padding-top:12px">
         <button class="card tile" id="dueBanner" style="border-left:4px solid var(--red);text-align:left;padding:12px 14px">
           <span class="lbl" style="color:var(--red)">⚠ ${dueReminders.length} reminder${dueReminders.length > 1 ? 's' : ''} due</span>
@@ -1067,20 +856,6 @@ function renderVehicleInfo(view) {
 
   $('#editVehicleBtn', view).onclick = () => vehicleForm(S.vehicle);
   $('#dueBanner', view) && ($('#dueBanner', view).onclick = () => { location.hash = '#/logs'; });
-  $('#heroCamBtn', view).onclick = () => {
-    const input = el('<input type="file" accept="image/*" hidden>');
-    document.body.append(input);
-    input.onchange = async () => {
-      if (input.files[0]) {
-        const data = await resizeImage(input.files[0]);
-        await POST('/api/photos', { entity_type: 'vehicle', entity_id: S.vehicle.id, kind: 'photo', name: input.files[0].name, data });
-        toast('Photo added');
-        refresh();
-      }
-      input.remove();
-    };
-    input.click();
-  };
 }
 
 function buildLogEntries(stats) {
@@ -1104,14 +879,6 @@ function buildLogEntries(stats) {
       sub: [names.join(', ') || 'Service'],
       cost: s.total_cost != null ? money(s.total_cost) : '',
       search: `service ${names.join(' ')} ${s.location} ${s.notes} ${(s.tags ? JSON.parse(s.tags) : []).join(' ')} ${s.odometer ?? ''} ${s.total_cost ?? ''}`.toLowerCase(),
-    });
-  }
-  for (const n of S.notes) {
-    entries.push({
-      type: 'note', date: n.date, obj: n, icon: ICON.note,
-      title: fmtDate(n.date),
-      sub: [n.title || (n.text || 'Note').slice(0, 60)],
-      search: `note ${n.title} ${n.text}`.toLowerCase(),
     });
   }
   for (const r of S.reminders) {
@@ -1170,7 +937,7 @@ function renderLogs(view) {
         : e.cost ? `<span class="rcost">${esc(e.cost)}</span>` : '<span></span>'}
     </button>`);
     row.onclick = () => {
-      ({ fuelup: fuelupForm, service: serviceForm, note: noteForm, reminder: reminderForm })[e.type](e.obj);
+      ({ fuelup: fuelupForm, service: serviceForm, reminder: reminderForm })[e.type](e.obj);
     };
     list.append(row);
   }
@@ -1182,12 +949,12 @@ function renderLogs(view) {
   };
   $('#filterBtn', view).onclick = () => openSheet({
     title: 'Show log types',
-    options: ['Fuelups', 'Services', 'Notes', 'Reminders'],
-    selected: ['Fuelups', 'Services', 'Notes', 'Reminders'].filter((_, i) => S.typeFilter[['fuelup', 'service', 'note', 'reminder'][i]]),
+    options: ['Fuelups', 'Services', 'Reminders'],
+    selected: ['Fuelups', 'Services', 'Reminders'].filter((_, i) => S.typeFilter[['fuelup', 'service', 'reminder'][i]]),
     multi: true, allowCustom: false,
     onDone: (sel) => {
-      const keys = { Fuelups: 'fuelup', Services: 'service', Notes: 'note', Reminders: 'reminder' };
-      S.typeFilter = { fuelup: false, service: false, note: false, reminder: false };
+      const keys = { Fuelups: 'fuelup', Services: 'service', Reminders: 'reminder' };
+      S.typeFilter = { fuelup: false, service: false, reminder: false };
       for (const s of sel) S.typeFilter[keys[s]] = true;
       store.set('typeFilter', S.typeFilter);
       renderLogs(view);
@@ -1249,7 +1016,7 @@ function openDrawer() {
     <div class="drawersec" style="border:0">
       <div class="dtitle">About</div>
       <div style="padding:6px 20px 16px;color:var(--ink-soft);font-size:13.5px;line-height:1.6">
-        GasTracker is your own self-hosted app.<br>Data lives in <code>data/gastracker.db</code> on your server. Back it up by exporting or copying that folder.
+        GasTracker is your own self-hosted app.<br>All data lives in <code>data/gastracker.db</code> on your server — back it up by exporting (JSON) or copying that one file.
       </div>
     </div>`;
   drawer.classList.remove('hidden');
@@ -1328,7 +1095,7 @@ function initChrome() {
   $$('.fabitem').forEach((b) => {
     b.onclick = () => {
       closeFabMenu();
-      ({ fuelup: fuelupForm, service: serviceForm, note: noteForm, reminder: reminderForm })[b.dataset.add](null);
+      ({ fuelup: fuelupForm, service: serviceForm, reminder: reminderForm })[b.dataset.add](null);
     };
   });
   window.addEventListener('hashchange', () => {

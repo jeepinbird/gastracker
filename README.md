@@ -7,22 +7,22 @@ subscription, **zero dependencies**: just Node.js and this repo.
 ## Features
 
 - **Vehicles** — name, year/make/model, VIN, engine, transmission, license plate,
-  insurance policy + insurance card photo, tire size/pressure, photos, private
-  notes. Retire or delete vehicles. Multiple vehicles supported.
+  insurance policy, tire size/pressure, private notes. Retire or delete
+  vehicles. Multiple vehicles supported.
 - **Fuelups** — odometer, cost/gal, gallons, total cost (any third value is
   auto-calculated), partial & missed fuel-up handling, city-driving % slider,
-  fuel type/octane, location, payment method, receipts & photos, notes.
+  fuel type/octane, location, payment method, notes.
 - **Services** — multi-select service types (oil change, tires, brakes, … plus
-  your own), cost, location, tags, payment type, receipts & photos, notes.
-- **Notes & Reminders** — free-form notes; reminders by date and/or odometer
-  with repeat intervals, flagged red when due.
+  your own), cost, location, tags, payment type, notes.
+- **Reminders** — due by date and/or odometer with repeat intervals, flagged
+  red when due.
 - **Dashboard** — avg/last/best MPG, total miles tracked, city/highway pie,
   fuel & service cost totals, fuel-efficiency and fuel-cost charts,
   avg price/gallon, avg fuel-up cost, avg price/mile.
 - **Logs** — combined searchable, filterable timeline of everything, with a
   recent-MPG bar chart and per-fuelup MPG badges.
 - **Your data, always** — one-tap JSON export/import of everything, CSV export
-  of fuelups, and the whole database is a single SQLite file you can copy.
+  of fuelups, and the whole database is one SQLite file you can copy.
 - **PWA** — installs to your phone's home screen and works across screen sizes.
 
 ## Running it
@@ -42,7 +42,7 @@ Open http://localhost:3000. That's it.
 | `PORT` | `3000` | Port to listen on |
 | `HOST` | `0.0.0.0` | Bind address |
 | `GASTRACKER_PASSWORD` | *(off)* | Enable HTTP Basic auth (any username) |
-| `GASTRACKER_DATA_DIR` | `./data` | Where the database + photos live |
+| `GASTRACKER_DATA_DIR` | `./data` | Where the database lives |
 
 ### Install on your phone
 
@@ -76,14 +76,12 @@ WantedBy=multi-user.target
 
 ## Your data
 
-Everything lives in the `data/` directory:
+Everything lives in one SQLite database:
 
-- `data/gastracker.db` — SQLite database (plus `-wal`/`-shm` journal files)
-- `data/uploads/` — photos and receipts
+- `data/gastracker.db` (plus `-wal`/`-shm` journal files)
 
-**Back up** by copying that directory, or use **menu → Export Everything
-(JSON)** in the app. Import restores onto any fresh install (photo files come
-along if you also copy `data/uploads/`).
+**Back up** by copying that file, or use **menu → Export Everything (JSON)**
+for a plain-text backup. Import restores onto any fresh install.
 
 ## Migrating from Gas Cubby / Fuelly
 
@@ -97,14 +95,15 @@ node scripts/fuelly-convert.js civicfuelups.csv civicservices.csv \
 Pass any number of fuelup/service CSVs — vehicles are created automatically
 from the `car_name` column and merged across files. Then open the app and use
 **menu → Import Backup** with the generated file. Partial and missed fuel-ups,
-city %, brands (as locations), notes, and "bought the car" entries all carry
-over; MPG is recomputed and matches Fuelly's numbers.
+city %, brands (as locations), and notes all carry over ("bought the car"
+entries become $0 service records); MPG is recomputed and matches Fuelly's
+numbers.
 
 ## Development notes
 
 - `server.js` — zero-dependency HTTP server + REST API (`/api/vehicles`,
-  `/api/fuelups`, `/api/services`, `/api/notes`, `/api/reminders`,
-  `/api/photos`, `/api/export`, `/api/import`)
+  `/api/fuelups`, `/api/services`, `/api/reminders`, `/api/export`,
+  `/api/import`)
 - `db.js` — SQLite schema
 - `public/` — vanilla-JS single-page app (no build step), hand-rolled SVG charts
 - `scripts/make-icons.js` — regenerates the PWA icons (`npm run icons`)

@@ -5,8 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const DATA_DIR = process.env.GASTRACKER_DATA_DIR || path.join(__dirname, 'data');
-const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
-fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+fs.mkdirSync(DATA_DIR, { recursive: true });
 
 const db = new DatabaseSync(path.join(DATA_DIR, 'gastracker.db'));
 db.exec('PRAGMA journal_mode = WAL');
@@ -70,17 +69,6 @@ CREATE TABLE IF NOT EXISTS services (
 );
 CREATE INDEX IF NOT EXISTS idx_services_vehicle ON services(vehicle_id, date);
 
-CREATE TABLE IF NOT EXISTS notes (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  vehicle_id INTEGER NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE,
-  date TEXT NOT NULL,
-  title TEXT DEFAULT '',
-  text TEXT DEFAULT '',
-  tags TEXT DEFAULT '[]',
-  created_at TEXT DEFAULT (datetime('now'))
-);
-CREATE INDEX IF NOT EXISTS idx_notes_vehicle ON notes(vehicle_id, date);
-
 CREATE TABLE IF NOT EXISTS reminders (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   vehicle_id INTEGER NOT NULL REFERENCES vehicles(id) ON DELETE CASCADE,
@@ -94,17 +82,6 @@ CREATE TABLE IF NOT EXISTS reminders (
   created_at TEXT DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_reminders_vehicle ON reminders(vehicle_id);
-
-CREATE TABLE IF NOT EXISTS photos (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  entity_type TEXT NOT NULL,   -- 'vehicle' | 'fuelup' | 'service' | 'note'
-  entity_id INTEGER NOT NULL,
-  kind TEXT DEFAULT 'photo',   -- 'photo' | 'receipt' | 'insurance_card'
-  filename TEXT NOT NULL,
-  original_name TEXT DEFAULT '',
-  created_at TEXT DEFAULT (datetime('now'))
-);
-CREATE INDEX IF NOT EXISTS idx_photos_entity ON photos(entity_type, entity_id);
 `);
 
-module.exports = { db, DATA_DIR, UPLOADS_DIR };
+module.exports = { db, DATA_DIR };
