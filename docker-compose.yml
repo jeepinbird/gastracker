@@ -1,6 +1,8 @@
 services:
   gastracker:
     build: .
+    # Or skip the build and use the published image:
+    # image: ghcr.io/jeepinbird/gastracker:latest
     container_name: gastracker
     ports:
       - "3000:3000"
@@ -9,6 +11,8 @@ services:
     restart: unless-stopped
     # environment:
     #   GASTRACKER_PASSWORD: change-me   # uncomment to require a password
+    #   PUID: 99                         # run as this uid:gid (99:100 = Unraid nobody:users)
+    #   PGID: 100
 
 volumes:
   gastracker-data:

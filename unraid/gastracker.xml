@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<Container version="2">
+  <Name>GasTracker</Name>
+  <Repository>ghcr.io/jeepinbird/gastracker:latest</Repository>
+  <Registry>https://github.com/jeepinbird/gastracker/pkgs/container/gastracker</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>sh</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/jeepinbird/gastracker/issues</Support>
+  <Project>https://github.com/jeepinbird/gastracker</Project>
+  <Overview>
+    A personal, self-hosted fuel &amp; vehicle service tracker — a Gas Cubby style
+    app with zero dependencies. Track fuelups, services, and reminders across
+    multiple vehicles, see MPG and cost dashboards, and install it to your phone
+    as a PWA. All data lives in a single SQLite file under the mapped data path.
+
+    Set a password with GASTRACKER_PASSWORD if the app will be reachable from
+    outside your LAN, and put it behind HTTPS (iOS requires HTTPS for PWA
+    installs from non-localhost hosts).
+  </Overview>
+  <Category>Tools:Utilities HomeAutomation:</Category>
+  <WebUI>http://[IP]:[PORT:3000]/</WebUI>
+  <TemplateURL>https://raw.githubusercontent.com/jeepinbird/gastracker/main/unraid/gastracker.xml</TemplateURL>
+  <Icon>https://raw.githubusercontent.com/jeepinbird/gastracker/main/public/icons/icon-192.png</Icon>
+  <ExtraParams/>
+  <PostArgs/>
+  <DonateText/>
+  <DonateLink/>
+  <Config Name="WebUI Port" Target="3000" Default="3000" Mode="tcp"
+          Description="Port the web UI listens on." Type="Port" Display="always"
+          Required="true" Mask="false">3000</Config>
+  <Config Name="Data" Target="/data" Default="/mnt/user/appdata/gastracker" Mode="rw"
+          Description="Holds gastracker.db — back this up." Type="Path" Display="always"
+          Required="true" Mask="false">/mnt/user/appdata/gastracker</Config>
+  <Config Name="Password" Target="GASTRACKER_PASSWORD" Default="" Mode=""
+          Description="Optional. Enables HTTP Basic auth (any username). Leave blank for no login."
+          Type="Variable" Display="always" Required="false" Mask="true"></Config>
+  <Config Name="PUID" Target="PUID" Default="99" Mode=""
+          Description="User the app runs as. 99 is Unraid's 'nobody'."
+          Type="Variable" Display="advanced" Required="false" Mask="false">99</Config>
+  <Config Name="PGID" Target="PGID" Default="100" Mode=""
+          Description="Group the app runs as. 100 is Unraid's 'users'."
+          Type="Variable" Display="advanced" Required="false" Mask="false">100</Config>
+  <Config Name="TZ" Target="TZ" Default="America/Chicago" Mode=""
+          Description="Timezone." Type="Variable" Display="advanced" Required="false"
+          Mask="false">America/Chicago</Config>
+</Container>

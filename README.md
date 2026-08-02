@@ -62,6 +62,40 @@ grab the database file straight from the volume:
 docker cp gastracker:/data/gastracker.db ./gastracker-backup.db
 ```
 
+### Run on Unraid
+
+Unraid's **Add Container** form pulls an *image* from a registry — it can't
+build from a GitHub URL. Pushing to `main` builds and publishes a multi-arch
+image to `ghcr.io/jeepinbird/gastracker:latest` (see
+`.github/workflows/docker-publish.yml`); make the package **public** once under
+the repo's Packages page so Unraid can pull it without credentials.
+
+Then either:
+
+**Use the template.** Docker tab → **Add Container** → in *Template* paste:
+
+```
+https://raw.githubusercontent.com/jeepinbird/gastracker/main/unraid/gastracker.xml
+```
+
+It fills in the repository, the WebUI port, the `/data` → `/mnt/user/appdata/gastracker`
+mapping, and the optional password. Or drop `unraid/gastracker.xml` into
+`/boot/config/plugins/dockerMan/templates-user/` and pick it from the
+*Template* dropdown.
+
+**Or fill the form by hand.** Repository `ghcr.io/jeepinbird/gastracker:latest`,
+network `bridge`, port `3000` → `3000`, path `/data` →
+`/mnt/user/appdata/gastracker` (read/write).
+
+The container starts as root, fixes ownership of `/data`, then drops to
+`PUID:PGID` (default `99:100`, Unraid's `nobody:users`) — so the appdata
+directory it creates is writable and the app never runs as root.
+
+Prefer building on the server instead of publishing an image? Install the
+**Compose Manager** plugin, clone the repo to
+`/mnt/user/appdata/gastracker-src`, and point a compose stack at it —
+`docker compose up -d` works the same as anywhere else.
+
 ### Options (environment variables)
 
 | Variable | Default | Purpose |
@@ -70,6 +104,7 @@ docker cp gastracker:/data/gastracker.db ./gastracker-backup.db
 | `HOST` | `0.0.0.0` | Bind address |
 | `GASTRACKER_PASSWORD` | *(off)* | Enable HTTP Basic auth (any username) |
 | `GASTRACKER_DATA_DIR` | `./data` | Where the database lives |
+| `PUID` / `PGID` | `99` / `100` | Docker only: uid:gid the app runs as |
 
 ### Install on your phone
 

@@ -212,8 +212,15 @@ async function handleApi(req, res, pathname) {
 
 const server = http.createServer(async (req, res) => {
   try {
-    if (!checkAuth(req, res)) return;
     const pathname = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+
+    // Container healthcheck — before auth, so it still works with a password set.
+    if (pathname === '/healthz') {
+      res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('ok');
+      return;
+    }
+    if (!checkAuth(req, res)) return;
 
     if (pathname.startsWith('/api/')) {
       await handleApi(req, res, pathname);
