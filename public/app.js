@@ -380,6 +380,59 @@ const fTap = (label, id, value, ph = '') =>
    <div class="fvalue ${value ? '' : 'empty'}">${esc(value || ph)}</div></div>`;
 
 // ---------------------------------------------------------------- fuelup form
+function bindFuelPrice(input, onChange) {
+  const digits = (value) => value.replace(/\D/g, '');
+  const show = (cents, caret = cents.length) => {
+    const trimmed = cents.replace(/^0+/, '');
+    const padded = (trimmed || '0').padStart(3, '0');
+    input.value = cents ? `${padded.slice(0, -2)}.${padded.slice(-2)}9` : '';
+    const beforeCaret = Math.max(0, padded.length - (cents.length - caret));
+    const pos = beforeCaret + (beforeCaret > padded.length - 2 ? 1 : 0);
+    input.setSelectionRange(pos, pos);
+    onChange();
+  };
+
+  // Edit the cents digits; the decimal and final nine are supplied for display.
+  input.addEventListener('beforeinput', (event) => {
+    if (!event.cancelable) return;
+    const deleting = event.inputType.startsWith('delete');
+    if (!deleting && event.inputType !== 'insertText') return;
+    event.preventDefault();
+    const added = digits(event.data || '');
+    if (!deleting && !added) return;
+    const value = input.value;
+    const decimal = value.indexOf('.');
+    const editableEnd = decimal < 0 ? value.length : Math.min(value.length, decimal + 3);
+    const cents = value ? digits(Number(value).toFixed(3).slice(0, -1)) : '';
+    const position = (offset) => offset >= editableEnd ? cents.length
+      : digits(value.slice(0, offset)).length;
+    let start = position(input.selectionStart);
+    let end = position(input.selectionEnd);
+    if (deleting && start === end) {
+      if (event.inputType === 'deleteContentBackward') start = Math.max(0, start - 1);
+      else if (event.inputType === 'deleteContentForward') end = Math.min(cents.length, end + 1);
+    }
+    const next = cents.slice(0, start) + added + cents.slice(end);
+    show(deleting && !/[1-9]/.test(next) ? '' : next, start + added.length);
+  });
+
+  // Paste/autofill can supply either cents digits or a complete decimal price.
+  const replace = (value) => {
+    const price = value.trim();
+    if (!/^\d*(?:\.\d*)?$/.test(price)) return false;
+    const cents = price.includes('.')
+      ? digits(price.split('.')[0] + price.split('.')[1].padEnd(2, '0').slice(0, 2))
+      : digits(price);
+    show(cents);
+    return true;
+  };
+  input.addEventListener('paste', (event) => {
+    event.preventDefault();
+    replace(event.clipboardData.getData('text'));
+  });
+  input.oninput = () => { if (!replace(input.value)) show(''); };
+}
+
 function fuelupForm(existing) {
   const isNew = !existing;
   const f = existing || {};
@@ -398,7 +451,7 @@ function fuelupForm(existing) {
     </div>
     <div class="formgrid thirds">
       <div class="formrow"><label class="flabel" for="fCpg">Cost / ${u.fuel === 'gal' ? 'Gal.' : 'L'}</label>
-        <input type="number" id="fCpg" inputmode="decimal" step="any" placeholder="0.000" value="${f.cost_per_gal ?? ''}"></div>
+        <input type="${u.fuel === 'gal' ? 'text' : 'number'}" id="fCpg" inputmode="${u.fuel === 'gal' ? 'numeric' : 'decimal'}" step="any" placeholder="0.000" value="${f.cost_per_gal ?? ''}"></div>
       <div class="formrow"><label class="flabel" for="fGal">${u.fuelLong}</label>
         <input type="number" id="fGal" inputmode="decimal" step="any" placeholder="0.000" value="${f.gallons ?? ''}"></div>
       <div class="formrow"><label class="flabel" for="fTot">Total Cost</label>
@@ -410,6 +463,7 @@ function fuelupForm(existing) {
       <div class="formrow"><span class="flabel">Missed Fuel-up?</span>
         <label class="checkrow"><input type="checkbox" id="fMissed" ${f.missed ? 'checked' : ''}><span>Reset</span></label></div>
     </div>
+    ${fText('Location', 'fLoc', f.location, '--')}
     ${S.vehicle.track_city_hwy ? `<div class="formrow slider-row">
       <span class="flabel">City Driving %</span>
       <div class="slider-val" id="cityVal">${f.city_pct ?? 50}%</div>
@@ -418,7 +472,6 @@ function fuelupForm(existing) {
     ${fTap('Fuel Type (Octane)', 'fuelTypeRow', fuelType)}
     <div class="formrow"><label class="flabel" for="fDate">Date</label>
       <input type="datetime-local" id="fDate" value="${toLocalInput(f.date)}"></div>
-    ${fText('Location', 'fLoc', f.location, '--')}
     ${fTap('Payment Method', 'payRow', payment)}
     <div class="formrow"><label class="flabel" for="fNotes">Notes</label>
       <textarea id="fNotes" placeholder="">${esc(f.notes || '')}</textarea></div>
@@ -433,6 +486,7 @@ function fuelupForm(existing) {
     else if (src === 'tot' && !isNaN(t) && !isNaN(c) && c > 0) gal.value = (t / c).toFixed(3);
   };
   cpg.oninput = () => recompute('cpg');
+  if (u.fuel === 'gal') bindFuelPrice(cpg, () => recompute('cpg'));
   gal.oninput = () => recompute('gal');
   tot.oninput = () => recompute('tot');
 
